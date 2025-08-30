@@ -1,0 +1,244 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "type": "dashboard",
+          "name": "Annotations & Alerts",
+          "enabled": true
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 1,
+    "id": null,
+    "iteration": 165465,
+    "links": [],
+    "panels": [
+      {
+        "type": "stat",
+        "title": "CPU Allocatable (cores)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(kube_node_status_allocatable_cpu_cores)",
+            "interval": "",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "auto",
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "cores",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 70 },
+                { "color": "red", "value": 90 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "stat",
+        "title": "CPU Requested (cores)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(kube_pod_container_resource_requests_cpu_cores{namespace=~\"$namespace\"})",
+            "interval": "",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "auto",
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "cores",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 70 },
+                { "color": "red", "value": 90 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "stat",
+        "title": "CPU Used (cores)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"\", namespace=~\"$namespace\"}[5m]))",
+            "interval": "",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "auto",
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "cores",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 70 },
+                { "color": "red", "value": 90 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "stat",
+        "title": "CPU Request Efficiency (%)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "(sum(rate(container_cpu_usage_seconds_total{container!=\"\", namespace=~\"$namespace\"}[5m])) / sum(kube_pod_container_resource_requests_cpu_cores{namespace=~\"$namespace\"})) * 100",
+            "interval": "",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "orientation": "auto",
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 70 },
+                { "color": "red", "value": 90 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "table",
+        "title": "Top 5 Pods by CPU Usage",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "topk(5, sum by (pod, namespace) (rate(container_cpu_usage_seconds_total{container!=\"\", namespace=~\"$namespace\"}[5m])))",
+            "format": "table",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "options": { "showHeader": true },
+        "fieldConfig": { "defaults": {}, "overrides": [] }
+      },
+      {
+        "type": "table",
+        "title": "Top 5 Pods by Memory Usage",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "topk(5, sum by (pod, namespace) (container_memory_usage_bytes{container!=\"\", namespace=~\"$namespace\"}))",
+            "format": "table",
+            "refId": "B"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "options": { "showHeader": true },
+        "fieldConfig": { "defaults": {}, "overrides": [] }
+      },
+      {
+        "type": "table",
+        "title": "Pods with No Resource Requests",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "count by (namespace, pod) (kube_pod_container_resource_requests_cpu_cores{namespace=~\"$namespace\"} == 0)",
+            "format": "table",
+            "refId": "C"
+          }
+        ],
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 12 },
+        "options": { "showHeader": true },
+        "fieldConfig": { "defaults": {}, "overrides": [] }
+      }
+    ],
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": ["kubernetes", "cluster-utilization"],
+    "templating": {
+      "list": [
+        {
+          "name": "namespace",
+          "type": "query",
+          "datasource": "Prometheus",
+          "refresh": 1,
+          "definition": "label_values(kube_pod_info, namespace)",
+          "query": "label_values(kube_pod_info, namespace)",
+          "includeAll": true,
+          "multi": false,
+          "sort": 1
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timezone": "browser",
+    "title": "Kubernetes Cluster Resource Utilization",
+    "uid": "k8s-utilization",
+    "version": 1
+  }
+  
