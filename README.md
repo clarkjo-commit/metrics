@@ -4,7 +4,7 @@ This script collects and summarizes **CPU and Memory utilization** across a Kube
 
 ---
 
-## 📖 Features
+## Features
 
 - Gathers **allocatable CPU and memory** from all nodes.
 - Aggregates **resource requests and limits** across all pods and containers.
